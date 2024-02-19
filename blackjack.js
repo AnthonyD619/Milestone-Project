@@ -8,7 +8,7 @@ var playerAceTotal = 0;
 var backOfCard;
 var deck;
 
-var hit = true;
+var canHit = true;
 
 window.onload = function() {
   createDeck();
@@ -27,7 +27,7 @@ function createDeck() { // creating the deck
       deck.push(values[y] + "-" + suits[x]); // loops through each suits first, and for each suit we loop through all the values
     }
   }
-  console.log(deck);
+  // console.log(deck);
 }
 /*********************************************************
  * Title: black-jack
@@ -45,13 +45,91 @@ function shuffleDeck() {
   }
   console.log(deck);
 }
+/*********************************************************
+ * Title: black-jack
+ * Author: ImKennyYip
+ * Year: 2022
+ * Code version: Programming code
+ * Availability: https://github.com/ImKennyYip/black-jack
+ *********************************************************/
 
 function startGame() {
   backOfCard = deck.pop(); // removes the last card of the array
   dealerTotal += getValue(backOfCard);
   dealerAceTotal += checkAce(backOfCard)
-  console.log(hidden);
+  //console.log(backOfCard);
+  //console.log(dealerTotal);
+  while (dealerTotal < 17) {
+    let cardImg = document.createElement('img');
+    let card = deck.pop();
+    cardImg.src = "./images/" + card + ".png";
+    dealerTotal += getValue(card);
+    dealerAceTotal += checkAce(card); // created the Ace count for dealer
+    document.getElementById("dealer-cards").append(cardImg); //adding an img to dealer-cards div until dealer has 17 or greater
+  }
+  console.log(dealerTotal);
+
+  for (let x=0; x < 2; x++) {
+    let cardImg = document.createElement('img');
+    let card = deck.pop();
+    cardImg.src = "./images/" + card + ".png";
+    playerTotal += getValue(card);
+    playerAceTotal += checkAce(card);
+    document.getElementById("player-cards").append(cardImg);
+
+  }
+
+  console.log(playerTotal)
+  document.getElementById("hit-button").addEventListener("click", hit);
+  document.getElementById("stand-button").addEventListener("click", stand);
 }
+
+function hit() {
+  if (!canHit) {
+    return;
+  }
+
+    let cardImg = document.createElement('img');
+    let card = deck.pop();
+    cardImg.src = "./images/" + card + ".png";
+    playerTotal += getValue(card);
+    playerAceTotal += checkAce(card);
+    document.getElementById("player-cards").append(cardImg);
+
+    if (reduceAce(playerTotal, playerAceTotal) > 21) { // takes into consideration the Ace count, whether its 1 or 11
+      canHit = false;
+    }
+}
+
+function stand() {
+  dealerTotal = reduceAce(dealerTotal, dealerAceTotal);
+  playerTotal = reduceAce(playerTotal, playerAceTotal);
+
+  canHit = false;
+  document.getElementById("backOfCard").src = "./images/" + backOfCard + ".png";
+
+  let message = "";
+  if (playerTotal > 21) {
+    message = "You Lost!";
+  }
+  else if (dealerTotal > 21) {
+    message = "You Win!";
+  }
+  else if (playerTotal == dealerTotal) {
+    message = "Push!" // push in blackjack means tie
+  }
+  else if (playerTotal > dealerTotal) {
+    message = "You Win!";
+  }
+  else if (playerTotal < dealerTotal) {
+    message = "You Lose!";
+  }
+
+  document.getElementById("dealer-total").innerText = dealerTotal;
+  document.getElementById("player-total").innerText = playerTotal;
+  document.getElementById("result").innerText = message;
+}
+
 
 function getValue(card) {
   let data = card.split("-"); // Example: "10-S" would be ["10", "S"]
@@ -79,4 +157,12 @@ function checkAce(card) {
     return 1;
   }
   return 0;
+}
+
+function reduceAce(playerTotal, playerAceTotal) {
+  while (playerTotal > 21 && playerAceTotal > 0) {
+    playerTotal -= 10;
+    playerAceTotal -= 1;
+  }
+  return playerTotal;
 }
