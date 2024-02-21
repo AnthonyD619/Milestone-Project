@@ -5,7 +5,7 @@ var playerTotal = 0; // total count for player
 var dealerAceTotal = 0;
 var playerAceTotal = 0;
 
-var backOfCard;
+var hide;
 var deck;
 
 var canHit = true;
@@ -54,11 +54,11 @@ function shuffleDeck() {
  *********************************************************/
 
 function startGame() {
-  backOfCard = deck.pop(); // removes the last card of the array
-  dealerTotal += getValue(backOfCard);
-  dealerAceTotal += checkAce(backOfCard)
-  //console.log(backOfCard);
-  //console.log(dealerTotal);
+  hide = deck.pop(); // removes the last card of the array
+  dealerTotal += getValue(hide);
+  dealerAceTotal += checkAce(hide);
+  //console.log(hide);
+  //console.log(hide);
   while (dealerTotal < 17) {
     let cardImg = document.createElement('img');
     let card = deck.pop();
@@ -69,7 +69,7 @@ function startGame() {
   }
   console.log(dealerTotal);
 
-  for (let x=0; x < 2; x++) {
+  for (let x = 0; x < 2; x++) {
     let cardImg = document.createElement('img');
     let card = deck.pop();
     cardImg.src = "./images/" + card + ".png";
@@ -106,7 +106,7 @@ function stand() {
   playerTotal = reduceAce(playerTotal, playerAceTotal);
 
   canHit = false;
-  document.getElementById("backOfCard").src = "./images/" + backOfCard + ".png";
+  document.getElementById("hide").src = "./images/" + hide + ".png";
 
   let message = "";
   if (playerTotal > 21) {
@@ -116,7 +116,7 @@ function stand() {
     message = "You Win!";
   }
   else if (playerTotal == dealerTotal) {
-    message = "Push!" // push in blackjack means tie
+    message = "Push!"; // push in blackjack means tie
   }
   else if (playerTotal > dealerTotal) {
     message = "You Win!";
